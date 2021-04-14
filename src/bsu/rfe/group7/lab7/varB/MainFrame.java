@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,6 +24,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 public class MainFrame extends JFrame {
 
@@ -49,6 +52,8 @@ public class MainFrame extends JFrame {
 	private final JTextArea textAreaIncoming;
 	private final JTextArea textAreaOutgoing;
 	
+	
+	
 	public MainFrame() {
 		super(FRAME_TITLE);
 		setMinimumSize(
@@ -60,8 +65,17 @@ public class MainFrame extends JFrame {
 				(kit.getScreenSize().height - getHeight()) / 2);
 		
 		
-		textAreaIncoming = new JTextArea(INCOMING_AREA_DEFAULT_ROWS, 0);
+		textAreaIncoming = new JTextArea();
 		textAreaIncoming.setEditable(false);
+		/*/textAreaIncoming.addHyperlinkListener(new  HyperlinkListener() {
+	        public void hyperlinkUpdate(HyperlinkEvent he) {
+	            // Проверка типа события
+	            if ( he.getEventType() != HyperlinkEvent.EventType.ACTIVATED) 
+	                return;
+	          
+	           
+	        }
+	    });/*/
 
 		final JScrollPane scrollPaneIncoming = new JScrollPane(textAreaIncoming);
 
@@ -70,6 +84,7 @@ public class MainFrame extends JFrame {
 
 		textFieldFrom = new JTextField(FROM_FIELD_DEFAULT_COLUMNS);
 		textFieldTo = new JTextField(TO_FIELD_DEFAULT_COLUMNS);
+		textFieldTo.setText("127.0.0.1");
 
 		textAreaOutgoing = new JTextArea(OUTGOING_AREA_DEFAULT_ROWS, 0);
 
@@ -132,6 +147,8 @@ public class MainFrame extends JFrame {
 					.addComponent(messagePanel)
 					.addContainerGap());
 			
+				
+				
 				new Thread(new Runnable() {
 
 				public void run() {
@@ -145,6 +162,7 @@ public class MainFrame extends JFrame {
 						socket.getInputStream());
 
 						final String senderName = in.readUTF();
+						
 
 						final String message = in.readUTF();
 
@@ -155,8 +173,9 @@ public class MainFrame extends JFrame {
 								.getRemoteSocketAddress())
 									.getAddress()
 										.getHostAddress();
+						
 
-							textAreaIncoming.append(senderName + 
+							textAreaIncoming.append(senderName+ 
 							" (" + address + "): " + 
 							message + "\n");
 				}
