@@ -7,15 +7,37 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+
+
 
 public class InstantMassage {
 
 	private String sender;
 	private MainFrame frame;
+	private ArrayList<MessageListener> listeners;
 	
+	public void addMessageListener(MessageListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+		public void removeMessageListener(MessageListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+		
+	private void notifyListeners(Peer sender, String message) {
+		synchronized (listeners) {
+			for (MessageListener listener : listeners) {
+				listener.messageReceived(sender, message);
+			}
+		}
+	}
 	public String getSender(){
 		return sender;
 	}
