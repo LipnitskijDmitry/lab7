@@ -184,7 +184,7 @@ public class MainFrame extends JFrame {
 					.addContainerGap());
 			
 				
-				IM = new InstantMassage( this);
+				IM = new InstantMassage(this);
 				
 	}
 	

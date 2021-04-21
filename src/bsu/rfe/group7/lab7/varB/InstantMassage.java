@@ -64,7 +64,7 @@ public class InstantMassage {
 					
 
 						frame.textAreaIncoming.append(senderName+ 
-						" (" + address + "): " + 
+						" (" + address + ": " +SERVER_PORT+ ") :"+
 						message + "\n");
 			}
 			} catch (IOException e) {
@@ -120,7 +120,7 @@ public class InstantMassage {
 
 				socket.close();
 
-				frame.textAreaIncoming.append("Я -> " + destinationAddress + ": "
+				frame.textAreaIncoming.append("Я -> " +"(" +destinationAddress + ": "+SERVER_PORT_S+") :"
 				+ message + "\n");
 
 				frame.textAreaOutgoing.setText("");
