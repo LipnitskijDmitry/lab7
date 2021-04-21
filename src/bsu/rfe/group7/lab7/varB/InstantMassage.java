@@ -17,27 +17,16 @@ import javax.swing.JTextArea;
 public class InstantMassage {
 
 	private String sender;
+	private Integer SERVER_PORT;
 	private MainFrame frame;
-	private ArrayList<MessageListener> listeners;
+	private ServerSocket serverSocket;
 	
-	public void addMessageListener(MessageListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
+	public void setPort(String SERVER_PORT)
+	{
+		this.SERVER_PORT=Integer.valueOf(SERVER_PORT);
+		this.startServer();
 	}
-		public void removeMessageListener(MessageListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
-		
-	private void notifyListeners(Peer sender, String message) {
-		synchronized (listeners) {
-			for (MessageListener listener : listeners) {
-				listener.messageReceived(sender, message);
-			}
-		}
-	}
+	
 	public String getSender(){
 		return sender;
 	}
@@ -46,15 +35,16 @@ public class InstantMassage {
 		sender = sender0;
 	}
 	
-	private void startServer(int SERVER_PORT){
+	private void startServer(){
 		new Thread(new Runnable() {
 
+			
 			public void run() {
 				try {
-					
-				final ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
 				
+				ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
 				while (!Thread.interrupted()) {
+
 					final Socket socket = serverSocket.accept();
 					final DataInputStream in = new DataInputStream(
 					socket.getInputStream());
@@ -87,13 +77,13 @@ public class InstantMassage {
 	}).start();
 	}
 	
-	public void sendMessage(String senderName, String destinationAddress, 
-			int SERVER_PORT) {
+	public void sendMessage(String senderName, String Address) {
 		try {
 				
 				/*/final String senderName = textFieldFrom.getText();
 				final String destinationAddress = textFieldTo.getText();
 				/*/
+			
 			
 			final String message = frame.textAreaOutgoing.getText();
 				if (senderName.isEmpty()) {
@@ -102,7 +92,7 @@ public class InstantMassage {
 								JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				if (destinationAddress.isEmpty()) {
+				if (Address.isEmpty()) {
 					JOptionPane.showMessageDialog(frame,
 								"Введите адрес узла-получателя", "Ошибка",
 								JOptionPane.ERROR_MESSAGE);
@@ -114,8 +104,13 @@ public class InstantMassage {
 								JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-
-				final Socket socket = new Socket(destinationAddress, SERVER_PORT);
+				int endIndex= Address.lastIndexOf(":");
+				
+				String destinationAddress = Address.substring(0,endIndex);
+				
+				Integer SERVER_PORT_S=Integer.valueOf(Address.substring(endIndex+1, Address.length()));
+				
+				final Socket socket = new Socket(destinationAddress, SERVER_PORT_S);
 
 				final DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 			
@@ -144,9 +139,9 @@ public class InstantMassage {
 		   
 		}
 	
-	public InstantMassage(int SERVER_PORT,MainFrame frame) {
+	public InstantMassage(MainFrame frame) {
 		this.frame = frame;
-		this.startServer(SERVER_PORT);
+		
 		
 	}
 

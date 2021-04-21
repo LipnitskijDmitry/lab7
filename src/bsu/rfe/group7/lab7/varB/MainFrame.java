@@ -44,9 +44,12 @@ public class MainFrame extends JFrame {
 	private static final int MEDIUM_GAP = 10;
 	private static final int LARGE_GAP = 15;
 	
-	private static final int SERVER_PORT = 4567;
+	
+	
+	private int SERVER_PORT = 4567;
 	
 	private final JTextField textFieldFrom;
+	private final JTextField textFieldFromPort;
 	private final JTextField textFieldTo;
 	
 	public final JTextArea textAreaIncoming;
@@ -67,38 +70,67 @@ public class MainFrame extends JFrame {
 		
 		textAreaIncoming = new JTextArea();
 		textAreaIncoming.setEditable(false);
-		/*/textAreaIncoming.addHyperlinkListener(new  HyperlinkListener() {
-	        public void hyperlinkUpdate(HyperlinkEvent he) {
-	            // Проверка типа события
-	            if ( he.getEventType() != HyperlinkEvent.EventType.ACTIVATED) 
-	                return;
-	          
-	           
-	        }
-	    });/*/
+		
 
 		final JScrollPane scrollPaneIncoming = new JScrollPane(textAreaIncoming);
 
 		final JLabel labelFrom = new JLabel("Подпись");
+		final JLabel labelFromPort = new JLabel("Порт");
 		final JLabel labelTo = new JLabel("Получатель");
 
 		textFieldFrom = new JTextField(FROM_FIELD_DEFAULT_COLUMNS);
+		textFieldFromPort = new JTextField(FROM_FIELD_DEFAULT_COLUMNS);
+		textFieldFromPort.setText("4567");
 		textFieldTo = new JTextField(TO_FIELD_DEFAULT_COLUMNS);
-		textFieldTo.setText("127.0.0.1");
+		textFieldTo.setText("127.0.0.1:4567");
 
 		textAreaOutgoing = new JTextArea(OUTGOING_AREA_DEFAULT_ROWS, 0);
 
 		final JScrollPane scrollPaneOutgoing = new JScrollPane(textAreaOutgoing);
 
+		final JPanel portPanel = new JPanel();
+		portPanel.setBorder(BorderFactory.createTitledBorder("Создать сервер"));
+		
+		final JButton portButton = new JButton("Создать сервер");
+		portButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				IM.setPort(textFieldFromPort.getText());
+				portButton.setEnabled(false);
+			}
+		});
+		
+		final GroupLayout layout3 = new GroupLayout(portPanel);
+		portPanel.setLayout(layout3);
+		
+		layout3.setHorizontalGroup(layout3.createSequentialGroup()
+			.addContainerGap()
+			.addGroup(layout3.createParallelGroup(Alignment.TRAILING)
+				.addGroup(layout3.createSequentialGroup()
+					.addComponent(labelFromPort)
+					.addGap(SMALL_GAP)
+					.addComponent(textFieldFromPort)
+					.addGap(LARGE_GAP)
+					.addComponent(portButton)))
+			.addContainerGap());
+		layout3.setVerticalGroup(layout3.createSequentialGroup()
+				.addContainerGap()
+				.addGroup(layout3.createParallelGroup(Alignment.BASELINE)
+					.addComponent(labelFromPort)
+					.addComponent(textFieldFromPort)
+					.addGap(LARGE_GAP)
+					.addComponent(portButton))
+				.addGap(MEDIUM_GAP)
+				.addContainerGap());
+		
 		final JPanel messagePanel = new JPanel();
 		messagePanel.setBorder(BorderFactory.createTitledBorder("Сообщение"));
-
+		
 		final JButton sendButton = new JButton("Отправить");
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IM.sendMessage(textFieldFrom.getText(), textFieldTo.getText(),SERVER_PORT
-						);
+				IM.sendMessage(textFieldFrom.getText(), textFieldTo.getText());
 			}
 		});
 
@@ -138,10 +170,13 @@ public class MainFrame extends JFrame {
 				layout1.setHorizontalGroup(layout1.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(layout1.createParallelGroup()
+						.addComponent(portPanel)
 						.addComponent(scrollPaneIncoming)
 						.addComponent(messagePanel))
 					.addContainerGap());
 				layout1.setVerticalGroup(layout1.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(portPanel)
 					.addContainerGap()
 					.addComponent(scrollPaneIncoming)
 					.addGap(MEDIUM_GAP)
@@ -149,8 +184,8 @@ public class MainFrame extends JFrame {
 					.addContainerGap());
 			
 				
+				IM = new InstantMassage( this);
 				
-				IM = new InstantMassage(SERVER_PORT, this );
 	}
 	
 		public static void main(String[] args) {
